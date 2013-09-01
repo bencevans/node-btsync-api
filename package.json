@@ -1,0 +1,22 @@
+{
+  "name": "btsync-api",
+  "version": "0.0.0",
+  "description": "Bittorent Sync API Client",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": "",
+  "keywords": [
+    "bittorent",
+    "sync",
+    "api",
+    "client"
+  ],
+  "author": "Ben Evans <ben@bensbit.co.uk> (http://bensbit.co.uk)",
+  "license": "MIT",
+  "dependencies": {
+    "request": "~2.27.0",
+    "underscore": "~1.5.1"
+  }
+}
