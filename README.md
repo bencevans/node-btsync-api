@@ -17,7 +17,7 @@
 * `iswebuilanguageset`
 * `getdir` params: `dir`: absolute path in file system
 * `getsyncfolders`
-* 
+
 ## Example
 
 ```javascript
