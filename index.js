@@ -58,7 +58,7 @@ var BTSyncAPI = function(options) {
   } else {
     this.getGUID(function(err, guid) {
       if(err) return client.emit('error', err);
-      this.guid = guid;
+      client.guid = guid;
       sortToken();
     });
   }
