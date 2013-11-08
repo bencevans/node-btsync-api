@@ -4,7 +4,8 @@
   "description": "Bittorent Sync API Client",
   "main": "index.js",
   "scripts": {
-    "test": "./node_modules/mocha/bin/mocha test.js"
+    "test": "./node_modules/mocha/bin/mocha test.js",
+    "travis-test": "./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha --report lcovonly -- -R spec && cat ./coverage/lcov.info | ./node_modules/.bin/coveralls && rm -rf ./coverage"
   },
   "repository": "https://github.com/bencevans/node-btsync-api.git",
   "keywords": [
@@ -20,6 +21,8 @@
     "underscore": "~1.5.1"
   },
   "devDependencies": {
-    "mocha": "*"
+    "mocha": "*",
+    "istanbul": "~0.1.44",
+    "coveralls": "~2.3.0"
   }
 }
