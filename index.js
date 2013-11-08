@@ -35,6 +35,19 @@ var BTSyncAPI = function(options) {
     token: null
   });
 
+  var requestDefaults = {
+    jar: this.jar
+  };
+
+  if(this.options.username) {
+    requestDefaults.auth = { user: this.options.username };
+    if(this.options.password) {
+      requestDefaults.auth.pass = this.options.password;
+    }
+  }
+
+  this.request = request.defaults(requestDefaults);
+
   this.url = 'http://' + this.options.host + ':' + this.options.port + '/gui';
 
   function sortToken() {
@@ -64,17 +77,16 @@ var BTSyncAPI = function(options) {
   }
 
   return this;
-}
+};
 util.inherits(BTSyncAPI, events.EventEmitter);
 
 BTSyncAPI.prototype.getGUID = function(callback) {
   var client = this;
-  request.post({
-    uri: this.url + '/en/index.html',
-    jar: this.jar
+  this.request.post({
+    uri: this.url + '/en/index.html'
   }, function(err, res, body) {
     if(err) return callback(err);
-    client.jar.add(request.cookie(res.headers['set-cookie'].toString()))
+    client.jar.add(request.cookie(res.headers['set-cookie'].toString()));
     callback(null, res.headers['set-cookie'].toString().match(/GUID=([0-9a-zA-Z]+);/)[1]);
   });
 };
@@ -84,9 +96,8 @@ BTSyncAPI.prototype.setToken = function(token) {
 };
 
 BTSyncAPI.prototype.getToken = function(callback) {
-  request.post({
-    uri: this.url + '/token.html?' + new Date(),
-    jar: this.jar
+  this.request.post({
+    uri: this.url + '/token.html?' + new Date()
   }, function(err, res, body) {
     if(err) return callback(err);
     callback(null, body.match(/<html><div id=\'token\' style=\'display:none;\'>(.+)<\/div><\/html>/)[1]);
@@ -107,13 +118,12 @@ BTSyncAPI.prototype.call = function(action, params, callback) {
     t: (new Date()).getTime()
   }, false);
 
-  request({
+  this.request({
     json: true,
-    jar: this.jar,
-    url: this.url + '/?' + querystring.stringify(params)
+    url: this.url + '/?' + querystring.stringify(params),
   }, function(err, res, body) {
     return callback(err, body);
-  })
+  });
 };
 
 function createClient(options) {

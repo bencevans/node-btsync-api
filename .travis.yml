@@ -10,4 +10,8 @@ node_js:
   - "0.8"
   - "0.10"
 
+env:
+  - BTSYNC_USERNAME=admin
+  - BTSYNC_PASSWORD=AdminPassword
+
 script: npm run travis-test

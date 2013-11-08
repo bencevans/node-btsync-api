@@ -1,7 +1,7 @@
 
 /**
  * Dependencies
- */ 
+ */
 
 var assert = require('assert');
 var btsync = require('./');
@@ -17,7 +17,9 @@ describe('btsync-api client', function() {
   it('should call ready', function(done) {
     client = btsync({
       host: process.env.BTSYNC_HOST,
-      port: process.env.BTSYNC_PORT
+      port: process.env.BTSYNC_PORT,
+      username: process.env.BTSYNC_USERNAME,
+      password: process.env.BTSYNC_PASSWORD
     });
     client.on('ready', done);
     client.on('error', done);
@@ -25,7 +27,7 @@ describe('btsync-api client', function() {
 
   it('should reply with version on getversion call', function(done) {
     client.call('getversion', function(err, res) {
-      if(err) return done(err)
+      if(err) return done(err);
       assert.equal(typeof res === 'object' && typeof res.version === 'number', true);
       done();
     });
