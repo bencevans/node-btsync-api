@@ -30,9 +30,7 @@ var BTSyncAPI = function(options) {
 
   this.options = _.defaults(options || {}, {
     host: 'localhost',
-    port: 8888,
-    guid: null,
-    token: null
+    port: 8888
   });
 
   var requestDefaults = {
@@ -50,31 +48,15 @@ var BTSyncAPI = function(options) {
 
   this.url = 'http://' + this.options.host + ':' + this.options.port + '/gui';
 
-  function sortToken() {
-    if(client.options.token) {
-      client.token = client.options.token;
-      process.nextTick(function() {
-        client.emit('ready');
-      });
-    } else {
-      client.getToken(function(err, token) {
-        if(err) return client.emit('error', error);
-        client.setToken(token);
-        client.emit('ready');
-      });
-    }
-  }
-
-  if(this.options.guid) {
-    this.guid = this.options.guid;
-    sortToken();
-  } else {
-    this.getGUID(function(err, guid) {
-      if(err) return client.emit('error', err);
-      client.guid = guid;
-      sortToken();
+  this.getGUID(function(err, guid) {
+    if(err) return client.emit('error', err);
+    client.guid = guid;
+    client.getToken(function(err, token) {
+      if(err) return client.emit('error', error);
+      client.setToken(token);
+      client.emit('ready');
     });
-  }
+  });
 
   return this;
 };
