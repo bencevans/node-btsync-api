@@ -1,6 +1,6 @@
 {
   "name": "btsync-api",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Bittorent Sync API Client",
   "main": "index.js",
   "scripts": {
