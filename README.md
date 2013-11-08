@@ -2,6 +2,10 @@
 
 [BitTorrent Sync](http://labs.bittorrent.com/experiments/sync.html) API Client
 
+[![Build Status](https://travis-ci.org/bencevans/node-btsync-api.png?branch=master)](https://travis-ci.org/bencevans/node-btsync-api)
+[![Coverage Status](https://coveralls.io/repos/bencevans/node-btsync-api/badge.png)](https://coveralls.io/r/bencevans/node-btsync-api)
+[![Dependency Status](https://david-dm.org/bencevans/node-btsync-api.png)](https://david-dm.org/bencevans/node-btsync-api)
+
 ## Install
 
 `npm install btsync-api`
