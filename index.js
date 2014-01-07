@@ -68,7 +68,6 @@ BTSyncAPI.prototype.getGUID = function(callback) {
     uri: this.url + '/en/index.html'
   }, function(err, res, body) {
     if(err) return callback(err);
-    client.jar.add(request.cookie(res.headers['set-cookie'].toString()));
     callback(null, res.headers['set-cookie'].toString().match(/GUID=([0-9a-zA-Z]+);/)[1]);
   });
 };
