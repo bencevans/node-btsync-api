@@ -6,6 +6,7 @@ before_install:
   - sudo apt-get install -qq btsync
   - export BTSYNC_USERNAME=admin
   - export BTSYNC_PASSWORD=AdminPassword
+  - npm config set strict-ssl false
 
 node_js:
   - "0.6"
