@@ -1,4 +1,4 @@
-# btsync-api [![Build Status](https://travis-ci.org/bencevans/node-btsync-api.png?branch=master)](https://travis-ci.org/bencevans/node-btsync-api) [![Coverage Status](https://coveralls.io/repos/bencevans/node-btsync-api/badge.png)](https://coveralls.io/r/bencevans/node-btsync-api) [![Dependency Status](https://david-dm.org/bencevans/node-btsync-api.png)](https://david-dm.org/bencevans/node-btsync-api)
+# btsync-api [![Build Status](https://img.shields.io/travis/bencevans/node-btsync-api.svg?style=flat-square)](https://travis-ci.org/bencevans/node-btsync-api) [![Coverage Status](https://img.shields.io/coveralls/bencevans/node-btsync-api.svg?branch=master&style=flat-square)](https://coveralls.io/r/bencevans/node-btsync-api)
 
 > [BitTorrent Sync](http://labs.bittorrent.com/experiments/sync.html) API Client
 
