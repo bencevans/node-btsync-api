@@ -1,16 +1,14 @@
-# btsync-api
+# btsync-api [![Build Status](https://travis-ci.org/bencevans/node-btsync-api.png?branch=master)](https://travis-ci.org/bencevans/node-btsync-api) [![Coverage Status](https://coveralls.io/repos/bencevans/node-btsync-api/badge.png)](https://coveralls.io/r/bencevans/node-btsync-api) [![Dependency Status](https://david-dm.org/bencevans/node-btsync-api.png)](https://david-dm.org/bencevans/node-btsync-api)
 
-[BitTorrent Sync](http://labs.bittorrent.com/experiments/sync.html) API Client
+> [BitTorrent Sync](http://labs.bittorrent.com/experiments/sync.html) API Client
 
-[![Build Status](https://travis-ci.org/bencevans/node-btsync-api.png?branch=master)](https://travis-ci.org/bencevans/node-btsync-api)
-[![Coverage Status](https://coveralls.io/repos/bencevans/node-btsync-api/badge.png)](https://coveralls.io/r/bencevans/node-btsync-api)
-[![Dependency Status](https://david-dm.org/bencevans/node-btsync-api.png)](https://david-dm.org/bencevans/node-btsync-api)
+
 
 ## Install
 
-`npm install btsync-api`
+    $ npm install btsync-api
 
-## API Commands
+## API
 
 * `licence`
 * `getostype`
@@ -36,5 +34,5 @@ client.on('error', console.error);
 
 ### Licence
 
-MIT
+MIT © [Ben Evans](http://bensbit.co.uk)
 
