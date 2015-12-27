@@ -46,66 +46,105 @@ var BTSyncAPI = function(options) {
 
   this.request = request.defaults(requestDefaults);
 
-  this.url = 'http://' + this.options.host + ':' + this.options.port + '/gui';
+  this.url = 'http://' + this.options.host + ':' + this.options.port + '/api/v2';
 
-  this.getGUID(function(err, guid) {
-    if(err) return client.emit('error', err);
-    client.guid = guid;
-    client.getToken(function(err, token) {
-      if(err) return client.emit('error', error);
-      client.setToken(token);
-      client.emit('ready');
-    });
+  client.getTokenAndCookie(function(err, token) {
+    if(err) return client.emit('error', error);
+
+    client.setToken(token);
+    client.emit('ready');
   });
 
   return this;
 };
 util.inherits(BTSyncAPI, events.EventEmitter);
 
-BTSyncAPI.prototype.getGUID = function(callback) {
-  var client = this;
-  this.request.post({
-    uri: this.url + '/en/index.html'
-  }, function(err, res, body) {
-    if(err) return callback(err);
-    callback(null, res.headers['set-cookie'].toString().match(/GUID=([0-9a-zA-Z]+);/)[1]);
-  });
-};
-
 BTSyncAPI.prototype.setToken = function(token) {
   this.token = token;
 };
 
-BTSyncAPI.prototype.getToken = function(callback) {
-  this.request.post({
-    uri: this.url + '/token.html?' + new Date()
+BTSyncAPI.prototype.getTokenAndCookie = function(callback) {
+  var _this = this;
+
+  this.request.get({
+    uri: this.url + '/token'
   }, function(err, res, body) {
     if(err) return callback(err);
-    callback(null, body.match(/<html><div id=\'token\' style=\'display:none;\'>(.+)<\/div><\/html>/)[1]);
+
+    var setCookieHeader = res.headers['set-cookie'].toString();
+    // TODO: guid seems not to be used explicitly anymore
+    _this.guid = setCookieHeader.match(/GUID=([0-9a-zA-Z]+);/)[1];
+
+    // store cookie for further requests
+    // see: http://stackoverflow.com/questions/20856139/cant-add-cookie-anymore-in-request-jar
+    _this.jar.setCookie(setCookieHeader, _this.url, function (err, cookie) {
+      var jsonBody = JSON.parse(body);
+      var token = jsonBody.data.token;
+
+      callback(null, token);
+    })
   });
 };
 
-BTSyncAPI.prototype.call = function(action, params, callback) {
-
-  if(!callback && typeof params === 'function') {
-    callback = params;
-    params = {};
-  }
-
+BTSyncAPI.prototype.addFolder = function (params, callback) {
   params = _.extend(params, {
-    token: this.token,
-    guid: this.guid,
-    action: action,
-    t: (new Date()).getTime()
+    token: this.token
   }, false);
 
-  this.request({
+  this.request.post({
     json: true,
-    url: this.url + '/?' + querystring.stringify(params),
+    url: this.url + '/folders?' + querystring.stringify(params),
   }, function(err, res, body) {
     return callback(err, body);
   });
 };
+
+BTSyncAPI.prototype.getInvitationLink = function (folderId, params, callback) {
+  params = _.extend(params, {
+    token: this.token
+  }, false);
+
+  this.request.post({
+    json: true,
+    url: this.url + '/folders/' + folderId + '/link?' + querystring.stringify(params),
+  }, function(err, res, body) {
+    return callback(err, body);
+  });
+};
+
+BTSyncAPI.prototype.removeFolder = function (folderId, params, callback) {
+  params = _.extend(params, {
+    token: this.token
+  }, false);
+
+  this.request.del({
+    json: true,
+    url: this.url + '/folders/' + folderId + '?' + querystring.stringify(params),
+  }, function(err, res, body) {
+    return callback(err, body);
+  });
+};
+
+// TODO: reuse this function to keep DRY in other calls
+// BTSyncAPI.prototype.call = function(action, params, callback) {
+//   if(!callback && typeof params === 'function') {
+//     callback = params;
+//     params = {};
+//   }
+
+//   params = _.extend(params, {
+//     token: this.token,
+//     guid: this.guid,
+//     action: action
+//   }, false);
+
+//   this.request({
+//     json: true,
+//     url: this.url + '/?' + querystring.stringify(params),
+//   }, function(err, res, body) {
+//     return callback(err, body);
+//   });
+// };
 
 function createClient(options) {
   return new BTSyncAPI(options);
