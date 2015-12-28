@@ -49,7 +49,7 @@ var BTSyncAPI = function(options) {
   this.url = 'http://' + this.options.host + ':' + this.options.port + '/api/v2';
 
   client.getTokenAndCookie(function(err, token) {
-    if(err) return client.emit('error', error);
+    if(err) return client.emit('error', err);
 
     client.setToken(token);
     client.emit('ready');
