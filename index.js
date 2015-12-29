@@ -138,6 +138,19 @@ BTSyncAPI.prototype.generateSecret = function (params, callback) {
   });
 };
 
+BTSyncAPI.prototype.getEvents = function (params, callback) {
+  params = _.extend(params, {
+    token: this.token
+  }, false);
+
+  this.request.get({
+    json: true,
+    url: this.url + '/events?' + querystring.stringify(params),
+  }, function(err, res, body) {
+    return callback(err, body);
+  });
+};
+
 // TODO: reuse this function to keep DRY in other calls
 // BTSyncAPI.prototype.call = function(action, params, callback) {
 //   if(!callback && typeof params === 'function') {
