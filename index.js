@@ -87,6 +87,9 @@ BTSyncAPI.prototype.getTokenAndCookie = function(callback) {
 };
 
 BTSyncAPI.prototype.addFolder = function (params, callback) {
+  _this = this;
+  var hasRetried = false;
+
   params = _.extend(params, {
     token: this.token
   }, false);
@@ -95,7 +98,19 @@ BTSyncAPI.prototype.addFolder = function (params, callback) {
     json: true,
     url: this.url + '/folders?' + querystring.stringify(params),
   }, function(err, res, body) {
-    return callback(err, body);
+    // try to reestablish connection only once
+    if (err && body !== '\r\ninvalid request' && !hasRetried) {
+      _this.getTokenAndCookie(function(err, token) {
+        if(err) return callback(err); // we can not reconnect
+
+        hasRetried = true;
+
+        _this.setToken(token);
+        _this.addFolder(params, callback);
+      });
+    } else {
+      return callback(err, body);
+    }
   });
 };
 
@@ -113,6 +128,9 @@ BTSyncAPI.prototype.getInvitationLink = function (folderId, params, callback) {
 };
 
 BTSyncAPI.prototype.removeFolder = function (folderId, params, callback) {
+  _this = this;
+  var hasRetried = false;
+
   params = _.extend(params, {
     token: this.token
   }, false);
@@ -121,11 +139,26 @@ BTSyncAPI.prototype.removeFolder = function (folderId, params, callback) {
     json: true,
     url: this.url + '/folders/' + folderId + '?' + querystring.stringify(params),
   }, function(err, res, body) {
-    return callback(err, body);
+    // try to reestablish connection only once
+    if (err && body !== '\r\ninvalid request' && !hasRetried) {
+      _this.getTokenAndCookie(function(err, token) {
+        if(err) return callback(err); // we can not reconnect
+
+        hasRetried = true;
+
+        _this.setToken(token);
+        _this.removeFolder(folderId, params, callback);
+      });
+    } else {
+      return callback(err, body);
+    }
   });
 };
 
 BTSyncAPI.prototype.generateSecret = function (params, callback) {
+  _this = this;
+  var hasRetried = false;
+
   params = _.extend(params, {
     token: this.token
   }, false);
@@ -134,7 +167,19 @@ BTSyncAPI.prototype.generateSecret = function (params, callback) {
     json: true,
     url: this.url + '/secret?' + querystring.stringify(params),
   }, function(err, res, body) {
-    return callback(err, body);
+    // try to reestablish connection only once
+    if (err && body !== '\r\ninvalid request' && !hasRetried) {
+      _this.getTokenAndCookie(function(err, token) {
+        if (err) return callback(err); // we can not reconnect
+
+        hasRetried = true;
+
+        _this.setToken(token);
+        _this.generateSecret(params, callback);
+      });
+    } else {
+      return callback(err, body);
+    }
   });
 };
 
