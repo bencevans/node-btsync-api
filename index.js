@@ -99,7 +99,7 @@ BTSyncAPI.prototype.addFolder = function (params, callback) {
     url: this.url + '/folders?' + querystring.stringify(params),
   }, function(err, res, body) {
     // try to reestablish connection only once
-    if (err && body !== '\r\ninvalid request' && !hasRetried) {
+    if ((err || body === '\r\ninvalid request') && !hasRetried) {
       _this.getTokenAndCookie(function(err, token) {
         if(err) return callback(err); // we can not reconnect
 
@@ -140,7 +140,7 @@ BTSyncAPI.prototype.removeFolder = function (folderId, params, callback) {
     url: this.url + '/folders/' + folderId + '?' + querystring.stringify(params),
   }, function(err, res, body) {
     // try to reestablish connection only once
-    if (err && body !== '\r\ninvalid request' && !hasRetried) {
+    if ((err || body === '\r\ninvalid request') && !hasRetried) {
       _this.getTokenAndCookie(function(err, token) {
         if(err) return callback(err); // we can not reconnect
 
@@ -168,7 +168,7 @@ BTSyncAPI.prototype.generateSecret = function (params, callback) {
     url: this.url + '/secret?' + querystring.stringify(params),
   }, function(err, res, body) {
     // try to reestablish connection only once
-    if (err && body !== '\r\ninvalid request' && !hasRetried) {
+    if ((err || body === '\r\ninvalid request') && !hasRetried) {
       _this.getTokenAndCookie(function(err, token) {
         if (err) return callback(err); // we can not reconnect
 
