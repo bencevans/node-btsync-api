@@ -86,6 +86,34 @@ BTSyncAPI.prototype.getTokenAndCookie = function(callback) {
   });
 };
 
+BTSyncAPI.prototype.getFolders = function (callback) {
+  _this = this;
+  var hasRetried = false;
+
+  params = _.extend({}, {
+    token: this.token
+  }, false);
+
+  this.request.get({
+    json: true,
+    url: this.url + '/folders?' + querystring.stringify(params),
+  }, function(err, res, body) {
+    // try to reestablish connection only once
+    if ((err || body === '\r\ninvalid request') && !hasRetried) {
+      _this.getTokenAndCookie(function(err, token) {
+        if(err) return callback(err); // we can not reconnect
+
+        hasRetried = true;
+
+        _this.setToken(token);
+        _this.getAllFolders(callback);
+      });
+    } else {
+      return callback(err, body);
+    }
+  });
+};
+
 BTSyncAPI.prototype.addFolder = function (params, callback) {
   _this = this;
   var hasRetried = false;
