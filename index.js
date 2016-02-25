@@ -26,25 +26,10 @@ var querystring = require('querystring');
 var BTSyncAPI = function(options) {
   var client = this;
 
-  this.jar = request.jar();
-
   this.options = _.defaults(options || {}, {
     host: 'localhost',
     port: 8888
   });
-
-  var requestDefaults = {
-    jar: this.jar
-  };
-
-  if(this.options.username) {
-    requestDefaults.auth = { user: this.options.username };
-    if(this.options.password) {
-      requestDefaults.auth.pass = this.options.password;
-    }
-  }
-
-  this.request = request.defaults(requestDefaults);
 
   this.url = 'http://' + this.options.host + ':' + this.options.port + '/api/v2';
 
@@ -66,23 +51,40 @@ BTSyncAPI.prototype.setToken = function(token) {
 BTSyncAPI.prototype.getTokenAndCookie = function(callback) {
   var _this = this;
 
+  // init or empty jar if there was something there
+  // this way we will get a new set-cookie header returned
+  this.jar = request.jar();
+  var requestDefaults = {
+    jar: this.jar
+  };
+
+  if(this.options.username) {
+    requestDefaults.auth = { user: this.options.username };
+    if(this.options.password) {
+      requestDefaults.auth.pass = this.options.password;
+    }
+  }
+  this.request = request.defaults(requestDefaults);
+
   this.request.get({
     uri: this.url + '/token'
   }, function(err, res, body) {
-    if(err) return callback(err);
+    if (err) return callback('Error while retrieving the token: ' + err);
 
-    var setCookieHeader = res.headers['set-cookie'].toString();
-    // TODO: guid seems not to be used explicitly anymore
-    _this.guid = setCookieHeader.match(/GUID=([0-9a-zA-Z]+);/)[1];
+    var jsonBody = JSON.parse(body);
+    if (!jsonBody.data || !jsonBody.data.token) return callback('Token was not found in the BTSyncAPI response body');
+    var token = jsonBody.data.token;
 
-    // store cookie for further requests
-    // see: http://stackoverflow.com/questions/20856139/cant-add-cookie-anymore-in-request-jar
-    _this.jar.setCookie(setCookieHeader, _this.url, function (err, cookie) {
-      var jsonBody = JSON.parse(body);
-      var token = jsonBody.data.token;
-
-      callback(null, token);
-    })
+    if (res.headers && res.headers['set-cookie']) {
+      var setCookieHeader = res.headers['set-cookie'].toString();
+      // store cookie for further requests
+      // see: http://stackoverflow.com/questions/20856139/cant-add-cookie-anymore-in-request-jar
+      _this.jar.setCookie(setCookieHeader, _this.url, function (err, cookie) {
+        callback(null, token);
+      })
+    } else {
+     return callback('Set-cookie header was not returned by BTSyncAPI');
+    }
   });
 };
 
